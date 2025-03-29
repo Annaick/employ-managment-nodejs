@@ -3,7 +3,7 @@
 Projet Nodejs pour la gestion d'employées utilisant NextJS et Postgres
 
 
-# Installer
+# Installation
 
 ## 1- Cloner
 Cloner le projet
