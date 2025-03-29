@@ -1,6 +1,7 @@
 "use client"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 type EmployeData = {
   nom: string;
@@ -29,14 +30,16 @@ export const useCreateEmploye = () => {
         throw new Error('Erreur lors de la création');
       }
 
-      return await response.json();
+      const employe = await response.json();
+      toast.success(employe.nom + " a été ajouté(e) avec succès")
+      return employe;
     },
     onSuccess: () => {
-      // Invalider la query employes pour forcer un re-fetch
       queryClient.invalidateQueries({ queryKey: ["employes"] });
     },
     onError: (error: Error) => {
       console.error("Error creating employe:", error);
+      toast.error("Erreur lors de la création de l'employé");
     }
   });
 

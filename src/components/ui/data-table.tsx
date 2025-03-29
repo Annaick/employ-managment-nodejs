@@ -106,7 +106,6 @@ export const DataTable =  () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuItem
                   onClick={() => {
                     setSelectedEmploye(employe)

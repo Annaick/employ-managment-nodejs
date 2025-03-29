@@ -2,6 +2,9 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "@ui/sonner"
+
+
 import "./globals.css";
 
 
@@ -38,6 +41,7 @@ export default function RootLayout({
             {children}
           </ThemeProvider>
         </QueryClientProvider>
+        <Toaster />
       </body>
     </html>
   );

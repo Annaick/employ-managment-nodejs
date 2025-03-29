@@ -1,6 +1,7 @@
 "use client"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 type EmployeData = {
   numEmp: number;
@@ -36,9 +37,11 @@ export const useEditEmploye = () => {
     onSuccess: () => {
       // Invalider la query employes-list pour forcer un re-fetch
       queryClient.invalidateQueries({ queryKey: ["employes"] });
+      toast.success("Employé(e) modifié(e) avec succès");
     },
     onError: (error: Error) => {
       console.error("Error editing employe:", error);
+        toast.error("Erreur lors de la modification de l'employé");
     }
   });
 

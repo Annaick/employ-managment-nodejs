@@ -1,6 +1,7 @@
 "use client"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export const useDeleteEmploye = () => {
   const queryClient = useQueryClient();
@@ -20,9 +21,11 @@ export const useDeleteEmploye = () => {
     onSuccess: () => {
       // Invalider la query employes pour forcer un re-fetch
       queryClient.invalidateQueries({ queryKey: ["employes"] });
+      toast.success("Employé(e) supprimé(e) avec succès");
     },
     onError: (error: Error) => {
       console.error("Erreur lors de la suppression:", error);
+      toast.error("Erreur lors de la suppression de l'employé(e)");
     }
   });
 
