@@ -23,6 +23,7 @@ import {
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
   import { Input } from "@ui/input"
+import { Badge } from '@ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@ui/table"
 import { useGetEmployes } from "@/services/useGetEmploye"
 import Employe from "@/types/employe"
@@ -60,13 +61,6 @@ export const DataTable =  () => {
 
     const columns: ColumnDef<Employe>[] = [
       {
-        accessorKey: "numEmp",
-        header: "Numéro",
-        cell: ({ row }) => (
-          <div>{row.getValue("numEmp")}</div>
-        ),
-      },
-      {
         accessorKey: "nom",
         header: 'Nom',
         cell: ({ row }) => <div>{row.getValue("nom")}</div>,
@@ -84,6 +78,18 @@ export const DataTable =  () => {
           cell: ({ row }) => {
             return <div className="text-right font-medium">{row.getValue('taux_journalier')}</div>
           },
+      },
+      {
+        accessorKey: "salaire",
+        header: () => <div className="text-right">Salaire</div>,
+        cell: ({ row }) =>{
+          const employe = row.original
+          return  (
+            <div className="text-right text-sm">
+              <Badge>{employe.nombre_de_jours * employe.taux_journalier}</Badge>
+            </div>
+          )
+        },
       },
       {
         id: "actions",
