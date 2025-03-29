@@ -1,41 +1,31 @@
 "use client"
 
+import { useQuery } from "@tanstack/react-query";
 import Employe from "@/types/employe";
 import { Filter } from "@/types/filter";
 import { Paginate } from "@/types/paginate";
-import { useEffect, useState } from "react";
+
+const fetchEmployes = async (filter: Filter) => {
+  const response = await fetch(
+    `/api/employes?search=${filter.search}&page=${filter.page}&perPage=${filter.perPage}`,
+    {
+      next: {
+        tags: ["employes-list"],
+        revalidate: 0
+      },
+      cache: "no-store",
+    }
+  );
+  if (!response.ok) {
+    throw new Error("Erreur lors de la récupération des employés");
+  }
+  return response.json();
+};
 
 export const useGetEmployes = (filter: Filter) => {
-    const [employes, setEmployes] = useState<Paginate<Employe[]> | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    
-    useEffect(() => {
-        const fetchEmployes = async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await fetch("/api/employes?search=" + filter.search + "&page=" + filter.page + "&perPage=" + filter.perPage,
-                {
-                    next: {
-                        tags: ["employes-list"],
-                        revalidate: 0
-                    },
-                    cache: "no-store",
-                }
-            );
-            const data = await response.json();
-            setEmployes(data);
-        } catch (error) {
-            console.error("Error fetching employes:", error);
-            setError("Erreur lors de la récupération des employés");
-        } finally {
-            setLoading(false);
-        }
-        };
-    
-        fetchEmployes();
-    }, [filter.search, filter.perPage, filter.page]);
-    
-    return { employes, loading, error };
-}
+  return useQuery<Paginate<Employe[]>, Error>({
+    queryKey: ["employes", filter.search, filter.page, filter.perPage],
+    queryFn: () => fetchEmployes(filter),
+    staleTime: 0,
+  });
+};

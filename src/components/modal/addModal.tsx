@@ -69,8 +69,9 @@ export const AddModal = ({open, setOpen}: {open: boolean, setOpen: Dispatch<SetS
     }
 
     return (
-    <Dialog onOpenChange={() => {
+    <Dialog onOpenChange={(value) => {
         form.reset()
+        setOpen(value)
     }} 
     open={open}
     >

@@ -20,9 +20,10 @@ import {
 import { useForm } from "react-hook-form"
 import { z } from 'zod'
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useCreateEmploye } from "@/services/useCreateEmploye"
 import { LoadingSpinner } from "../ui/spinner"
-import { Dispatch, SetStateAction } from "react"
+import { Dispatch, SetStateAction, useEffect } from "react"
+import Employe from "@/types/employe"
+import { useEditEmploye } from "@/services/useEditEmploye"
 
 const formSchema = z.object({
     nom: z.string().min(3, { message: "Le nom doit être plus de trois(3) charactères" }),
@@ -38,23 +39,32 @@ const formSchema = z.object({
 
 
 
-export const DeleteModal = ({open, setOpen}: {open: boolean, setOpen: Dispatch<SetStateAction<boolean>>}) => {
+export const EditModal = ({open, setOpen, employe}: {open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, employe: Employe}) => {
 
-    const { createEmploye, isCreating } = useCreateEmploye()
+    const { editEmploye, isEditing} = useEditEmploye()
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-          nom: "",
+          nom: '',
           taux: 0,
           jours: 0,
         },
       })
+
+      useEffect(() => {
+        form.reset({
+            nom: employe.nom,
+            taux: Number(employe.taux_journalier),
+            jours: employe.nombre_de_jours,
+        });
+    }, [employe, form]);
      
       // 2. Define a submit handler.
       async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
-            await createEmploye({
+            await editEmploye({
+                numEmp: employe.numEmp,
                 nom: values.nom,
                 nombre_de_jours: values.jours,
                 taux_journalier: values.taux,
@@ -69,14 +79,15 @@ export const DeleteModal = ({open, setOpen}: {open: boolean, setOpen: Dispatch<S
     }
 
     return (
-    <Dialog onOpenChange={() => {
+    <Dialog onOpenChange={(value) => {
         form.reset()
+        setOpen(value)
     }} 
     open={open}
     >
         <DialogContent>
             <DialogHeader>
-            <DialogTitle>Ajouter un(e) employé(e)</DialogTitle>
+            <DialogTitle>Modifier</DialogTitle>
             </DialogHeader>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -131,9 +142,9 @@ export const DeleteModal = ({open, setOpen}: {open: boolean, setOpen: Dispatch<S
                         </FormItem>
                     )}
                 />
-                <Button disabled={isCreating}>
-                    {isCreating && (<LoadingSpinner />)}
-                    Ajouter
+                <Button disabled={isEditing}>
+                    {isEditing && (<LoadingSpinner />)}
+                    Modifier
                 </Button>
                 </form>
             </Form>

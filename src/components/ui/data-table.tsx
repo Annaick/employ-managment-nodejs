@@ -29,65 +29,8 @@ import Employe from "@/types/employe"
 import { useState } from "react"
 import { useDebounce } from "use-debounce"
 import { AddModal } from "../modal/addModal"
-
-export const columns: ColumnDef<Employe>[] = [
-    {
-      accessorKey: "numEmp",
-      header: "Numéro",
-      cell: ({ row }) => (
-        <div>{row.getValue("numEmp")}</div>
-      ),
-    },
-    {
-      accessorKey: "nom",
-      header: 'Nom',
-      cell: ({ row }) => <div className="lowercase">{row.getValue("nom")}</div>,
-    },
-    {
-      accessorKey: "nombre_de_jours",
-      header: () => <div className="text-right">Nombre de jours</div>,
-      cell: ({ row }) => {
-        return <div className="text-right font-medium">{row.getValue('nombre_de_jours')}</div>
-      },
-    },
-    {
-        accessorKey: "taux_journalier",
-        header: () => <div className="text-right">Taux journalier</div>,
-        cell: ({ row }) => {
-          return <div className="text-right font-medium">{row.getValue('taux_journalier')}</div>
-        },
-    },
-    {
-      id: "actions",
-      enableHiding: false,
-      cell: ({ }) => {
-        //const employe = row.original
-   
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Ouvrir menu</span>
-                <MoreHorizontal />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => {}}
-              >
-                Modifier
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                className="text-red-500"
-              >Supprimer</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )
-      },
-    },
-  ]
+import { EditModal } from "../modal/EditModal"
+import { useDeleteEmploye } from "@/services/useDeleteEmploye"
 
 
 export const DataTable =  () => {
@@ -102,14 +45,84 @@ export const DataTable =  () => {
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = useState({})
 
+    const [selectedEmploye, setSelectedEmploye] = useState<Employe | null>(null)
     const [openAdd, setOpenAdd] = useState(false)
+    const [openEdit, setOpenEdit] = useState(false)
 
     //DATA
-    const { employes, error } = useGetEmployes({
+    const { data: employes, error } = useGetEmployes({
       search: debouncedSearch,
       page: pagination.pageIndex + 1,
       perPage: pagination.pageSize,
     });
+    const { deleteEmploye } = useDeleteEmploye();
+
+
+    const columns: ColumnDef<Employe>[] = [
+      {
+        accessorKey: "numEmp",
+        header: "Numéro",
+        cell: ({ row }) => (
+          <div>{row.getValue("numEmp")}</div>
+        ),
+      },
+      {
+        accessorKey: "nom",
+        header: 'Nom',
+        cell: ({ row }) => <div>{row.getValue("nom")}</div>,
+      },
+      {
+        accessorKey: "nombre_de_jours",
+        header: () => <div className="text-right">Nombre de jours</div>,
+        cell: ({ row }) => {
+          return <div className="text-right font-medium">{row.getValue('nombre_de_jours')}</div>
+        },
+      },
+      {
+          accessorKey: "taux_journalier",
+          header: () => <div className="text-right">Taux journalier</div>,
+          cell: ({ row }) => {
+            return <div className="text-right font-medium">{row.getValue('taux_journalier')}</div>
+          },
+      },
+      {
+        id: "actions",
+        enableHiding: false,
+        cell: ({ row }) => {
+          const employe = row.original
+     
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Ouvrir menu</span>
+                  <MoreHorizontal />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setSelectedEmploye(employe)
+                    setOpenEdit(true)
+                  }}
+                >
+                  Modifier
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="text-red-500"
+                  onClick={async() => {
+                      await deleteEmploye(employe.numEmp)
+                  }}
+                >Supprimer</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )
+        },
+      },
+    ]
+  
 
 
     const table = useReactTable({
@@ -231,7 +244,8 @@ export const DataTable =  () => {
         </Table>
       </div>
       }
-      <div className="flex items-center justify-end space-x-2 py-4">
+      <div className="flex items-center justify-between space-x-2 py-4">
+        <p className="text-sm">Un total de <span className="underline">{employes?.pagination?.total} employé(e)s</span></p>
         <div className="space-x-2">
           <Button
             variant="outline"
@@ -253,6 +267,7 @@ export const DataTable =  () => {
         </div>
         </div>
         <AddModal open={openAdd} setOpen={setOpenAdd} />
+        {selectedEmploye && (<EditModal open={openEdit} setOpen={setOpenEdit} employe={selectedEmploye} />)}
     </main>
     )
 }

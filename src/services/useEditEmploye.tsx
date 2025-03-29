@@ -3,22 +3,24 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type EmployeData = {
+  numEmp: number;
   nom: string;
   nombre_de_jours: number;
   taux_journalier: number;
 };
 
-export const useCreateEmploye = () => {
+export const useEditEmploye = () => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: async (employeData: EmployeData) => {
       const response = await fetch('/api/employes', {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          numEmp: Number(employeData.numEmp),
           nom: employeData.nom,
           nombre_de_jours: Number(employeData.nombre_de_jours),
           taux_journalier: Number(employeData.taux_journalier)
@@ -26,23 +28,23 @@ export const useCreateEmploye = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Erreur lors de la création');
+        throw new Error('Erreur lors de la modification');
       }
 
       return await response.json();
     },
     onSuccess: () => {
-      // Invalider la query employes pour forcer un re-fetch
+      // Invalider la query employes-list pour forcer un re-fetch
       queryClient.invalidateQueries({ queryKey: ["employes"] });
     },
     onError: (error: Error) => {
-      console.error("Error creating employe:", error);
+      console.error("Error editing employe:", error);
     }
   });
 
   return {
-    createEmploye: mutation.mutateAsync,
-    isCreating: mutation.isPending,
+    editEmploye: mutation.mutateAsync,
+    isEditing: mutation.isPending,
     error: mutation.error?.message || null
   };
 };
