@@ -18,33 +18,43 @@ export async function GET(req: NextRequest) {
     const searchParams = req.nextUrl.searchParams;
     const filters = Object.fromEntries(searchParams.entries());
 
-
     const page = filters.page ? parseInt(filters.page as string) : 1;
     const perPage = filters.perPage ? parseInt(filters.perPage as string) : 5;
 
     // Construction de la requête de base
     let query = db.select('*').from('employe');
 
-
     if (filters.search) {
       query = query.whereILike('nom', `%${filters.search}%`);
     }
 
-
     const offset = (page - 1) * perPage;
-
     const employes = await query.offset(offset).limit(perPage).orderBy('numEmp', 'asc');
 
-
+    // Requête pour le total d'employés (filtré si recherche)
     let totalQuery = db.count('* as count').from('employe');
-    
     if (filters.search) {
       totalQuery = totalQuery.whereILike('nom', `%${filters.search}%`);
     }
-
     const totalResult = await totalQuery.first();
     const total = totalResult ? parseInt(totalResult.count as string) : 0;
     const totalPages = Math.ceil(total / perPage);
+
+    // Requêtes pour les statistiques globales des salaires (toujours sur toute la BD)
+    const salaryStatsQuery = db
+      .select(
+        db.raw('SUM(nombre_de_jours * taux_journalier) as total_salaires'),
+        db.raw('MAX(nombre_de_jours * taux_journalier) as salaire_max'),
+        db.raw('MIN(nombre_de_jours * taux_journalier) as salaire_min')
+      )
+      .from('employe');
+
+    // Appliquer le filtre de recherche aux stats si nécessaire
+    if (filters.search) {
+      salaryStatsQuery.whereILike('nom', `%${filters.search}%`);
+    }
+
+    const salaryStats = await salaryStatsQuery.first();
 
     return NextResponse.json({
       data: employes,
@@ -55,6 +65,11 @@ export async function GET(req: NextRequest) {
         totalPages,
         hasNextPage: page < totalPages,
         hasPreviousPage: page > 1,
+      },
+      salaryStatistics: {
+        totalSalaries: salaryStats?.total_salaires || 0,
+        maxSalary: salaryStats?.salaire_max || 0,
+        minSalary: salaryStats?.salaire_min || 0
       }
     });
   } catch (error) {

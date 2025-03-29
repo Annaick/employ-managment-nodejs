@@ -18,7 +18,6 @@ import {
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
@@ -32,6 +31,9 @@ import { useDebounce } from "use-debounce"
 import { AddModal } from "../modal/addModal"
 import { EditModal } from "../modal/EditModal"
 import { useDeleteEmploye } from "@/services/useDeleteEmploye"
+import { ResumeModal } from "../modal/resumeModal"
+import { ChartModal } from "../modal/chartModal"
+import { Separator } from "@radix-ui/react-dropdown-menu"
 
 
 export const DataTable =  () => {
@@ -153,8 +155,8 @@ export const DataTable =  () => {
 
 
     return(
-        <main className="w-full grid grid-cols-1 md:grid-cols-[1fr_400px] gap-[32px] row-start-2 items-center sm:items-start">
-            <div className="w-full">
+      <main className="w-full grid grid-cols-1 md:grid-cols-[1fr_400px] gap-[32px] row-start-2 items-center sm:items-start">
+        <div className="w-full">
       <div className="flex items-center py-4">
         <Input
           placeholder="Filtrer par noms..."
@@ -271,8 +273,14 @@ export const DataTable =  () => {
         </div>
         </div>
         </div>
+        <div>
+          <ResumeModal max={employes?.salaryStatistics.maxSalary ?? 0} total={employes?.salaryStatistics.totalSalaries ?? 0} min={employes?.salaryStatistics.minSalary ?? 0} />
+          <Separator className="my-4"/>
+          <ChartModal max={employes?.salaryStatistics.maxSalary ?? 0} total={employes?.salaryStatistics.totalSalaries ?? 0} min={employes?.salaryStatistics.minSalary ?? 0}/>
+        </div>
+        
         <AddModal open={openAdd} setOpen={setOpenAdd} />
         {selectedEmploye && (<EditModal open={openEdit} setOpen={setOpenEdit} employe={selectedEmploye} />)}
-    </main>
+      </main>
     )
 }
