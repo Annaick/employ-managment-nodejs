@@ -76,8 +76,8 @@ Resultat:
 !!!! Ne pas travailler directement sur la branche main
 
 
- 1- Créer une branche pour son travail
- 2 - Travailler sur sa branche
- 3 - Creer un pull request et demander un review à une personne au moins
- 4 - Après validation, merger
+ 1- Créer une branche pour son travail 
+ 2 - Travailler sur sa branche 
+ 3 - Creer un pull request et demander un review à une personne au moins 
+ 4 - Après validation, merger 
  
