@@ -26,7 +26,7 @@ Autre methode recommandée (optionel):
 ```bash
   docker compose up
 ```
-    cette commande va creer le serveur postgres automatiquement en local 
+  cette commande va creer le serveur postgres automatiquement en local 
 
 ## 2- Mettre en place les environnements
 
