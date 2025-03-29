@@ -67,3 +67,17 @@ Ouvrir un navigateur et aller dans
 ```bash
   http://localhost:3000/api/test
 ```
+Resultat:
+![Screenshot From 2025-03-29 07-36-19](https://github.com/user-attachments/assets/607d1bbb-9e94-4950-a8ab-6b95c7cedcae)
+
+
+# Methodologie de travail
+
+!!!! Ne pas travailler directement sur la branche main
+
+
+ 1- Créer une branche pour son travail
+ 2 - Travailler sur sa branche
+ 3 - Creer un pull request et demander un review à une personne au moins
+ 4 - Après validation, merger
+ 
