@@ -73,8 +73,8 @@ Resultat:
 
 # Methodologie de travail
 
-[!CAUTION]
-Ne pas travailler directement sur la branche main
+> [!CAUTION]
+> Negative potential consequences of an action.
 
 
  1- Créer une branche pour son travail 
