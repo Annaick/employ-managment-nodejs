@@ -11,7 +11,7 @@ import {
     getSortedRowModel,
     useReactTable,
   } from "@tanstack/react-table"
-  import { ChevronDown, MoreHorizontal } from "lucide-react"
+  import { ChevronDown, MoreHorizontal, PlusCircleIcon } from "lucide-react"
   import { Button } from "@ui/button"
 import {
     DropdownMenu,
@@ -28,6 +28,7 @@ import { useGetEmployes } from "@/services/useGetEmploye"
 import Employe from "@/types/employe"
 import { useState } from "react"
 import { useDebounce } from "use-debounce"
+import { AddModal } from "../modal/addModal"
 
 export const columns: ColumnDef<Employe>[] = [
     {
@@ -101,6 +102,8 @@ export const DataTable =  () => {
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = useState({})
 
+    const [openAdd, setOpenAdd] = useState(false)
+
     //DATA
     const { employes, error } = useGetEmployes({
       search: debouncedSearch,
@@ -169,6 +172,12 @@ export const DataTable =  () => {
               })}
           </DropdownMenuContent>
         </DropdownMenu>
+        <div className="ml-2">
+          <Button onClick={() => setOpenAdd(true)}>
+            <PlusCircleIcon />
+            Ajouter
+          </Button>
+        </div>
       </div>
       {error ? (<p className="text-red-500">Erreur lors du chargement des données</p>) :
         <div className="rounded-md border">
@@ -243,6 +252,7 @@ export const DataTable =  () => {
         </div>
         </div>
         </div>
+        <AddModal open={openAdd} setOpen={setOpenAdd} />
     </main>
     )
 }

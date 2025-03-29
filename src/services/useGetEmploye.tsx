@@ -15,7 +15,15 @@ export const useGetEmployes = (filter: Filter) => {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch("/api/employes?search=" + filter.search + "&page=" + filter.page + "&perPage=" + filter.perPage);
+            const response = await fetch("/api/employes?search=" + filter.search + "&page=" + filter.page + "&perPage=" + filter.perPage,
+                {
+                    next: {
+                        tags: ["employes-list"],
+                        revalidate: 0
+                    },
+                    cache: "no-store",
+                }
+            );
             const data = await response.json();
             setEmployes(data);
         } catch (error) {
