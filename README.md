@@ -19,14 +19,14 @@ Cloner le projet
 ## 2- Postgres
 Lancez un serveur postgres en local selon votre choix
 
-Autre methode recommandée (optionel):
-- Installer Docker 
-- Dans la racine du projet, ouvrir un terminal et lancer la commande:
-
-```bash
-  docker compose up
-```
-  cette commande va creer le serveur postgres automatiquement en local 
+> [!TIP]
+> Autre methode recommandée (optionel):
+> - Installer Docker 
+> - Dans la racine du projet, ouvrir un terminal et lancer la commande:
+> ```bash
+>  docker compose up
+> ```
+> cette commande va creer le serveur postgres automatiquement en local 
 
 ## 2- Mettre en place les environnements
 
@@ -74,7 +74,7 @@ Resultat:
 # Methodologie de travail
 
 > [!CAUTION]
-> Negative potential consequences of an action.
+> Ne pas travailler sur la branche main directement
 
 
  1- Créer une branche pour son travail 
