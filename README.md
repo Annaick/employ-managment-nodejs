@@ -32,7 +32,7 @@ Autre methode recommandée (optionel):
 
 Dans le projet, dupliquer le fichier '.env.exemple' et le renommer '.env'
 
-ensuite mettre les valeurs selon votre configuration dans le fichier
+ensuite mettre les valeurs selon votre configuration locale
   - POSTGRES_DB: nom de la base de données
   - POSTGRES_USER= nom de l'utilisateur
   - POSTGRES_PASSWORD= mot de passe
