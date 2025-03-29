@@ -3,7 +3,6 @@
 import {
     ColumnDef,
     ColumnFiltersState,
-    SortingState,
     VisibilityState,
     flexRender,
     getCoreRowModel,
@@ -12,9 +11,8 @@ import {
     getSortedRowModel,
     useReactTable,
   } from "@tanstack/react-table"
-  import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+  import { ChevronDown, MoreHorizontal } from "lucide-react"
   import { Button } from "@ui/button"
-import { Checkbox } from "@ui/checkbox"
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -25,35 +23,13 @@ import {
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
   import { Input } from "@ui/input"
-import { LoadingSpinner } from "@ui/spinner";
-import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@ui/table"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@ui/table"
 import { useGetEmployes } from "@/services/useGetEmploye"
 import Employe from "@/types/employe"
 import { useState } from "react"
+import { useDebounce } from "use-debounce"
 
 export const columns: ColumnDef<Employe>[] = [
-    {
-      id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
     {
       accessorKey: "numEmp",
       header: "Numéro",
@@ -63,17 +39,7 @@ export const columns: ColumnDef<Employe>[] = [
     },
     {
       accessorKey: "nom",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Nom
-            <ArrowUpDown />
-          </Button>
-        )
-      },
+      header: 'Nom',
       cell: ({ row }) => <div className="lowercase">{row.getValue("nom")}</div>,
     },
     {
@@ -93,8 +59,8 @@ export const columns: ColumnDef<Employe>[] = [
     {
       id: "actions",
       enableHiding: false,
-      cell: ({ row }) => {
-        const employe = row.original
+      cell: ({ }) => {
+        //const employe = row.original
    
         return (
           <DropdownMenu>
@@ -124,19 +90,31 @@ export const columns: ColumnDef<Employe>[] = [
 
 
 export const DataTable =  () => {
-    const [sorting, setSorting] = useState<SortingState>([])
+    const [search, setSearch] = useState("")
+    const [debouncedSearch] = useDebounce(search, 500);
+    const [pagination, setPagination] = useState({
+      pageIndex: 0,
+      pageSize: 5,
+    });
+    
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = useState({})
 
     //DATA
-    const { employes, loading, error } = useGetEmployes();
+    const { employes, error } = useGetEmployes({
+      search: debouncedSearch,
+      page: pagination.pageIndex + 1,
+      perPage: pagination.pageSize,
+    });
 
 
     const table = useReactTable({
-        data: employes,
+        data: employes?.data || [],
         columns,
-        onSortingChange: setSorting,
+        pageCount: employes?.pagination?.totalPages ?? - 1,
+        manualPagination: true,
+        onPaginationChange: setPagination,
         onColumnFiltersChange: setColumnFilters,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
@@ -145,30 +123,24 @@ export const DataTable =  () => {
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
         state: {
-          sorting,
           columnFilters,
           columnVisibility,
           rowSelection,
+          pagination
         },
-      })
+    })
 
 
-    if (loading) {
-        return <LoadingSpinner />;
-    }
-    if (error) {
-        return <div className="text-red-500">{error}</div>;
-    }
     return(
         <main className="w-full grid grid-cols-1 md:grid-cols-[1fr_400px] gap-[32px] row-start-2 items-center sm:items-start">
             <div className="w-full">
       <div className="flex items-center py-4">
         <Input
           placeholder="Filtrer par noms..."
-          value={(table.getColumn("nom")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("nom")?.setFilterValue(event.target.value)
-          }
+          value={search}
+          onChange={(event) => {
+            setSearch(event.target.value)
+          }}
           className="max-w-sm"
         />
         <DropdownMenu>
@@ -198,7 +170,8 @@ export const DataTable =  () => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="rounded-md border">
+      {error ? (<p className="text-red-500">Erreur lors du chargement des données</p>) :
+        <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -248,11 +221,8 @@ export const DataTable =  () => {
           </TableBody>
         </Table>
       </div>
+      }
       <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} {" sur "}
-          {table.getFilteredRowModel().rows.length} lignes(s) selectionnées.
-        </div>
         <div className="space-x-2">
           <Button
             variant="outline"
