@@ -73,7 +73,8 @@ Resultat:
 
 # Methodologie de travail
 
-!!!! Ne pas travailler directement sur la branche main
+[!CAUTION]
+Ne pas travailler directement sur la branche main
 
 
  1- Créer une branche pour son travail 
