@@ -8,8 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "migrate:make": "npx knex migrate:make",
-    "migrate:latest": "npx knex migrate:latest",
-    "migrate:rollback": "npx knex migrate:rollback"
+    "migrate": "npx knex migrate:latest",
+    "migrate:rollback": "npx knex migrate:rollback",
+    "seed": "npx knex seed:run"
   },
   "dependencies": {
     "knex": "^3.1.0",

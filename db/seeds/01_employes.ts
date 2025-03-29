@@ -1,7 +1,6 @@
-import { Knex } from "knex";
-import Employe from "../../types/employe";
+import type { Knex } from "knex";
 
-const employes: Employe[] = [
+const employes = [
     { numEmp: 1, nom: "John Doe", nombre_de_jours: 10, taux_journalier: 100 },
     { numEmp: 2, nom: "Jane Smith", nombre_de_jours: 20, taux_journalier: 150 },
     { numEmp: 3, nom: "Alice Johnson", nombre_de_jours: 15, taux_journalier: 120 },
