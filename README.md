@@ -77,7 +77,10 @@ Resultat:
 
 
  1- Créer une branche pour son travail 
- 2 - Travailler sur sa branche 
+ 
+ 2 - Travailler sur sa branche
+ 
  3 - Creer un pull request et demander un review à une personne au moins 
+ 
  4 - Après validation, merger 
  
