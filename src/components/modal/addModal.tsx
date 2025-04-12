@@ -26,14 +26,12 @@ import { Dispatch, SetStateAction } from "react"
 
 const formSchema = z.object({
     nom: z.string().min(3, { message: "Le nom doit être plus de trois(3) charactères" }),
-    taux: z.number({
-      required_error: "Le taux journalier est requis",
-      invalid_type_error: "Le taux doit être un nombre",
-    }).min(1, { message: "Le taux journalier doit être supérieur à 0" }),
-    jours: z.number({
-      required_error: "Le nombre de jours est requis",
-      invalid_type_error: "Le nombre de jours doit être un nombre",
-    }).min(1, { message: "Le nombre de jours doit être supérieur à 0" }),
+    taux: z.string().refine(val => !isNaN(Number(val)) && Number(val) > 0, {
+      message: "Le taux journalier doit être un nombre supérieur à 0"
+    }),
+    jours: z.string().refine(val => !isNaN(Number(val)) && Number(val) > 0, {
+      message: "Le nombre de jours doit être un nombre supérieur à 0"
+    }),
   });
 
 
@@ -46,8 +44,8 @@ export const AddModal = ({open, setOpen}: {open: boolean, setOpen: Dispatch<SetS
         resolver: zodResolver(formSchema),
         defaultValues: {
           nom: "",
-          taux: 0,
-          jours: 0,
+          taux: "",
+          jours: "",
         },
       })
      
@@ -56,8 +54,8 @@ export const AddModal = ({open, setOpen}: {open: boolean, setOpen: Dispatch<SetS
         try {
             await createEmploye({
                 nom: values.nom,
-                nombre_de_jours: values.jours,
-                taux_journalier: values.taux,
+                nombre_de_jours: Number(values.jours),
+                taux_journalier: Number(values.taux),
             });
             // Fermer le modal ou réinitialiser le formulaire
             form.reset();
@@ -105,8 +103,7 @@ export const AddModal = ({open, setOpen}: {open: boolean, setOpen: Dispatch<SetS
                                     placeholder="Taux journalier" 
                                     type="number"
                                     min={0}
-                                    value={field.value}
-                                    onChange={event => field.onChange(+event.target.value)}
+                                    {...field}
                                 />
                             </FormControl>
                             <FormMessage />
@@ -124,8 +121,7 @@ export const AddModal = ({open, setOpen}: {open: boolean, setOpen: Dispatch<SetS
                                     placeholder="Nombre de jours" 
                                     type="number"
                                     min={0}
-                                    value={field.value}
-                                    onChange={event => field.onChange(+event.target.value)}
+                                    {...field}
                                 />
                             </FormControl>
                             <FormMessage />

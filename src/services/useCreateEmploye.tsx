@@ -27,8 +27,9 @@ export const useCreateEmploye = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Erreur lors de la création');
-      }
+        const errorData = await response.json().catch(() => null);
+        throw new Error(`Erreur lors de la création: ${errorData?.message || response.statusText || 'Raison inconnue'}`);
+      }      
 
       const employe = await response.json();
       toast.success(employe.nom + " a été ajouté(e) avec succès")
