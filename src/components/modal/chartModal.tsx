@@ -1,5 +1,4 @@
 "use client"
-import { TrendingUp } from "lucide-react"
 import { Bar, BarChart, ReferenceLine, XAxis, YAxis } from "recharts"
 
 import {
@@ -19,7 +18,7 @@ import {
 
 const chartConfig = {
   visitors: {
-    label: "Visitors",
+    label: "Salaire",
   },
   chrome: {
     label: "Total",
@@ -38,9 +37,9 @@ const chartConfig = {
 export function ChartModal({total, max, min}: { total: number, max: number, min: number }) {
 const maxValue = Math.max(total, max, min) * 1.1;
 const chartData = [
-    { browser: "chrome", visitors: total, fill: "var(--color-chrome)" },
-    { browser: "safari", visitors: max, fill: "var(--color-safari)" },
-    { browser: "firefox", visitors: min, fill: "var(--color-firefox)" },
+    { browser: "chrome", salaire: total, fill: "var(--color-chrome)" },
+    { browser: "safari", salaire: max, fill: "var(--color-safari)" },
+    { browser: "firefox", salaire: min, fill: "var(--color-firefox)" },
   ]
   return (
     <Card className="w-[400px]">
@@ -67,23 +66,17 @@ const chartData = [
                 chartConfig[value as keyof typeof chartConfig]?.label
               }
             />
-            <XAxis dataKey="visitors" type="number" hide domain={[0, maxValue]} />
+            <XAxis dataKey="salaire" type="number" hide domain={[0, maxValue]} />
             <ReferenceLine x={maxValue} stroke="transparent" />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-            <Bar  dataKey="visitors" layout="vertical" radius={5} />
+            <Bar  dataKey="salaire" layout="vertical" radius={5} />
           </BarChart>
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
-        </div>
       </CardFooter>
     </Card>
   )
