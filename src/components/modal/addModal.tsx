@@ -46,8 +46,8 @@ export const AddModal = ({open, setOpen}: {open: boolean, setOpen: Dispatch<SetS
         resolver: zodResolver(formSchema),
         defaultValues: {
           nom: "",
-          taux: 0,
-          jours: 0,
+          taux: undefined,
+          jours: undefined,
         },
       })
      

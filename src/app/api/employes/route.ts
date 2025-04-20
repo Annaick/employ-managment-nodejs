@@ -40,22 +40,6 @@ export async function GET(req: NextRequest) {
     const total = totalResult ? parseInt(totalResult.count as string) : 0;
     const totalPages = Math.ceil(total / perPage);
 
-    // Requêtes pour les statistiques globales des salaires (toujours sur toute la BD)
-    const salaryStatsQuery = db
-      .select(
-        db.raw('SUM(nombre_de_jours * taux_journalier) as total_salaires'),
-        db.raw('MAX(nombre_de_jours * taux_journalier) as salaire_max'),
-        db.raw('MIN(nombre_de_jours * taux_journalier) as salaire_min')
-      )
-      .from('employe');
-
-    // Appliquer le filtre de recherche aux stats si nécessaire
-    if (filters.search) {
-      salaryStatsQuery.whereILike('nom', `%${filters.search}%`);
-    }
-
-    const salaryStats = await salaryStatsQuery.first();
-
     return NextResponse.json({
       data: employes,
       pagination: {
@@ -65,11 +49,6 @@ export async function GET(req: NextRequest) {
         totalPages,
         hasNextPage: page < totalPages,
         hasPreviousPage: page > 1,
-      },
-      salaryStatistics: {
-        totalSalaries: salaryStats?.total_salaires || 0,
-        maxSalary: salaryStats?.salaire_max || 0,
-        minSalary: salaryStats?.salaire_min || 0
       }
     });
   } catch (error) {

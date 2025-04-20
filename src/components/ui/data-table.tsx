@@ -34,6 +34,7 @@ import { useDeleteEmploye } from "@/services/useDeleteEmploye"
 import { ResumeModal } from "../modal/resumeModal"
 import { ChartModal } from "../modal/chartModal"
 import { Separator } from "@radix-ui/react-dropdown-menu"
+import { useGetStats } from "@/services/useGetStat"
 
 
 export const DataTable =  () => {
@@ -41,7 +42,7 @@ export const DataTable =  () => {
     const [debouncedSearch] = useDebounce(search, 500);
     const [pagination, setPagination] = useState({
       pageIndex: 0,
-      pageSize: 5,
+      pageSize: 9,
     });
     
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -59,6 +60,7 @@ export const DataTable =  () => {
       perPage: pagination.pageSize,
     });
     const { deleteEmploye } = useDeleteEmploye();
+    const {data: stats} = useGetStats()
 
 
     const columns: ColumnDef<Employe>[] = [
@@ -274,9 +276,9 @@ export const DataTable =  () => {
         </div>
         </div>
         <div>
-          <ResumeModal max={employes?.salaryStatistics.maxSalary ?? 0} total={employes?.salaryStatistics.totalSalaries ?? 0} min={employes?.salaryStatistics.minSalary ?? 0} />
+          <ResumeModal max={stats?.statistics.maxSalary ?? 0} total={stats?.statistics.totalSalaries ?? 0} min={stats?.statistics.minSalary ?? 0} />
           <Separator className="my-4"/>
-          <ChartModal max={employes?.salaryStatistics.maxSalary ?? 0} total={employes?.salaryStatistics.totalSalaries ?? 0} min={employes?.salaryStatistics.minSalary ?? 0}/>
+          <ChartModal max={stats?.statistics.maxSalary ?? 0} total={stats?.statistics.totalSalaries ?? 0} min={stats?.statistics.minSalary ?? 0}/>
         </div>
         
         <AddModal open={openAdd} setOpen={setOpenAdd} />
