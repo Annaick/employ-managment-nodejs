@@ -7,7 +7,7 @@ const config: { [key: string]: Knex.Config } = {
       database: process.env.POSTGRES_DB || "nodejs-db",
       user: process.env.POSTGRES_USER || "user",
       password: process.env.POSTGRES_PASSWORD || "1234",
-      host: process.env.POSTGRES_HOST || "localhost",
+      host: process.env.POSTGRES_HOST || "db",
     },
     migrations: {
       directory: './db/migrations',
