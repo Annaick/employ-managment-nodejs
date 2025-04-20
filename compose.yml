@@ -13,6 +13,8 @@ services:
     depends_on:
       - db
     restart: unless-stopped  
+    stdin_open: true
+    tty: true
   db:
     env_file: .env
     image: postgres:15
