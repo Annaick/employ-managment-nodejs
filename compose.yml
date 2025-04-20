@@ -4,6 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      network: host
     container_name: node_js_project_front
     ports:
       - "3000:3000"
