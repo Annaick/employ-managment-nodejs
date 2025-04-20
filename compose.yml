@@ -1,8 +1,24 @@
 services:
+  app:
+    env_file: .env
+    build:
+      context: .
+      dockerfile: Dockerfile
+      network: host
+    container_name: node_js_project_front
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    restart: unless-stopped  
+    stdin_open: true
+    tty: true
   db:
     env_file: .env
     image: postgres:15
-    container_name: postgres_db
+    container_name: node_js_project_postgres_db
     environment:
       POSTGRES_DB: "${POSTGRES_DB}"
       POSTGRES_USER: "${POSTGRES_USER}"

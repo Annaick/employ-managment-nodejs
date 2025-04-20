@@ -1,0 +1,11 @@
+# .dockerignore
+
+# Ignore the .next folder
+.next
+
+# Ignore node_modules
+node_modules
+
+# Ignore other build artifacts
+dist
+build

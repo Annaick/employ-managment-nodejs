@@ -7,10 +7,5 @@ export interface Paginate <T>{
         totalPages: number;
         hasNextPage: boolean,
         hasPreviousPage: boolean,
-    },
-    salaryStatistics: {
-        totalSalaries: number;
-        maxSalary: number;
-        minSalary: number;
     }
 }
