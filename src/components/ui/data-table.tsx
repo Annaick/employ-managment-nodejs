@@ -65,6 +65,16 @@ export const DataTable =  () => {
 
     const columns: ColumnDef<Employe>[] = [
       {
+        id: "index",
+        enableHiding: false,
+        header: "Num",
+        cell: ({ row }) => {
+          // Calcul de l'index en tenant compte de la pagination
+          const index = row.index + 1 + (pagination.pageIndex * pagination.pageSize);
+          return <div className="text-center text-muted-foreground">{index}</div>;
+        },
+      },
+      {
         accessorKey: "nom",
         header: 'Nom',
         cell: ({ row }) => <div>{row.getValue("nom")}</div>,
